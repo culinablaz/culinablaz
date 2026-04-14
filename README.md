@@ -15,11 +15,6 @@
 
 ---
 
-<!-- Two-column layout: About Me + Tech Stack side by side -->
-<table>
-<tr>
-<td width="50%" valign="top">
-
 ### 👋 About Me
 
 I'm **Blaž Čulina**, a Software Engineer based in **Imotski** 🇭🇷 & **Mostar** 🇧🇦
@@ -30,28 +25,34 @@ Studied at **Sveučilište u Mostaru - FSRE**.
 
 When I'm not writing code for work, I'm tinkering with homelab setups, making music, or exploring side projects.
 
-</td>
-<td width="50%" valign="top">
+---
+
+### 🧠 Interests
+
+- ⚙️ Building overly complex systems for simple problems
+- 🏠 Self-hosting everything that shouldn't be self-hosted
+- 🤖 Arguing with Claude about code style
+- 🎮 PC/Console Gaming
+- 🎸 Making noise on guitar and pretending it's music production
+- 🔍 Taking apart software to see what makes it tick
+
+---
 
 ### 🛠️ Tech Stack
 
 <p align="center">
-  <img src="https://img.shields.io/badge/Java-ED8B00?style=flat-square&logo=openjdk&logoColor=white" />
-  <img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=flat-square&logo=springboot&logoColor=white" />
-  <img src="https://img.shields.io/badge/Kafka-231F20?style=flat-square&logo=apachekafka&logoColor=white" />
-  <img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=flat-square&logo=postgresql&logoColor=white" />
-  <img src="https://img.shields.io/badge/Kubernetes-326CE5?style=flat-square&logo=kubernetes&logoColor=white" />
-  <img src="https://img.shields.io/badge/Docker-2496ED?style=flat-square&logo=docker&logoColor=white" />
-  <img src="https://img.shields.io/badge/Helm-0F1689?style=flat-square&logo=helm&logoColor=white" />
-  <img src="https://img.shields.io/badge/Jenkins-D24939?style=flat-square&logo=jenkins&logoColor=white" />
-  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=flat-square&logo=typescript&logoColor=white" />
-  <img src="https://img.shields.io/badge/Linux-FCC624?style=flat-square&logo=linux&logoColor=black" />
-  <img src="https://img.shields.io/badge/Git-F05032?style=flat-square&logo=git&logoColor=white" />
+  <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white" />
+  <img src="https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=springboot&logoColor=white" />
+  <img src="https://img.shields.io/badge/Kafka-231F20?style=for-the-badge&logo=apachekafka&logoColor=white" />
+  <img src="https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" />
+  <img src="https://img.shields.io/badge/Kubernetes-326CE5?style=for-the-badge&logo=kubernetes&logoColor=white" />
+  <img src="https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white" />
+  <img src="https://img.shields.io/badge/Helm-0F1689?style=for-the-badge&logo=helm&logoColor=white" />
+  <img src="https://img.shields.io/badge/Jenkins-D24939?style=for-the-badge&logo=jenkins&logoColor=white" />
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" />
+  <img src="https://img.shields.io/badge/Linux-FCC624?style=for-the-badge&logo=linux&logoColor=black" />
+  <img src="https://img.shields.io/badge/Git-F05032?style=for-the-badge&logo=git&logoColor=white" />
 </p>
-
-</td>
-</tr>
-</table>
 
 ---
 
@@ -64,17 +65,6 @@ When I'm not writing code for work, I'm tinkering with homelab setups, making mu
 <p align="center">
   <img src="https://github-readme-activity-graph.vercel.app/graph?username=culinablaz&theme=github-dark&hide_border=true&area=true" />
 </p>
-
----
-
-### 🧠 Interests
-
-- ⚙️ Building overly complex systems for simple problems
-- 🏠 Self-hosting everything that shouldn't be self-hosted
-- 🤖 Arguing with Claude about code style
-- 🎮 PC/Console Gaming
-- 🎸 Making noise on guitar and pretending it's music production
-- 🔍 Taking apart software to see what makes it tick
 
 ---
 
