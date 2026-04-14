@@ -29,10 +29,9 @@ When I'm not writing code for work, I'm tinkering with homelab setups, making mu
 
 ### 🧠 Interests
 
-- ⚙️ Building overly complex systems for simple problems
+- ⚙️ Solving everything with code for that shouldn't be solved with code
 - 🏠 Self-hosting everything that shouldn't be self-hosted
 - 🤖 Arguing with Claude about code style
-- 🎮 PC/Console Gaming
 - 🎸 Making noise on guitar and pretending it's music production
 - 🔍 Taking apart software to see what makes it tick
 
