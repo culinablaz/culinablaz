@@ -58,11 +58,9 @@ When I'm not writing code for work, I'm tinkering with homelab setups, making mu
 
 ### 🧠 Interests
 
-- ⚙️ Distributed systems & event-driven architecture
-- 🤖 AI tinkering & AI-assisted development
-- 🏠 Self-hosting & homelab projects
-- 🖥️ Computer tinkering & side projects
+- ⚙️ Building overly complex systems for simple problems
+- 🏠 Self-hosting everything that shouldn't be self-hosted
+- 🤖 Arguing with Claude about code style
 - 🎮 PC/Console Gaming
-- 🎸 Guitar, music production & audio engineering
-- 🎬 Video editing & image editing
-- 🔍 Reverse engineering & security research
+- 🎸 Making noise on guitar and pretending it's music production
+- 🔍 Taking apart software to see what makes it tick
