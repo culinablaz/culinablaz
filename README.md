@@ -4,7 +4,7 @@
 </p>
 
 <h1 align="center">
-  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=600&size=24&duration=4000&pause=1000&color=E8E8E8&center=true&vCenter=true&random=false&width=600&lines=%F0%9F%A4%A0+Get+three+coffins+ready.;My+mistake%2C+four+coffins.;Works+on+my+machine+%E2%84%A2;LGTM!+%F0%9F%9A%80" alt="Typing SVG" />
+  <img src="https://readme-typing-svg.herokuapp.com?font=Fira+Code&weight=600&size=24&duration=4000&pause=1000&color=E8E8E8&center=true&vCenter=true&random=false&width=600&lines=%F0%9F%A4%A0+Works+on+my+machine+%E2%84%A2;LGTM!+%F0%9F%9A%80" alt="Typing SVG" />
 </h1>
 
 <p align="center">
