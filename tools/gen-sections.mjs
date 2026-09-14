@@ -7,8 +7,8 @@ const [TOOLS, OUT] = process.argv.slice(2);
 const b64 = f => readFileSync(f).toString('base64');
 const fontCss = `@font-face{font-family:'IBM Plex Mono';font-weight:400;src:url(data:font/woff2;base64,${b64(TOOLS + '/fonts/IBMPlexMono-Regular.woff2')}) format('woff2')}@font-face{font-family:'IBM Plex Mono';font-weight:700;src:url(data:font/woff2;base64,${b64(TOOLS + '/fonts/IBMPlexMono-Bold.woff2')}) format('woff2')}`;
 const themes = {
-  light: { paper: '#fbf7f0', border: '#d1c9c3', ink: '#29231e', muted: '#77706b', ember: '#d95800', idle: '#e3ddd8', warm: '#edb793', line: '#d1c9c3', rule: '#ece6dd' },
-  dark:  { paper: '#1c1714', border: '#38322d', ink: '#eae3de', muted: '#98918b', ember: '#d95800', idle: '#322d29', warm: '#7d5238', line: '#38322d', rule: '#2a2420' },
+  light: { paper: '#fbf7f0', border: '#d1c9c3', ink: '#29231e', muted: '#77706b', ember: '#d95800', idle: '#e3ddd8', warm: '#edb793', line: '#d1c9c3', rule: '#ece6dd', card: '#f6f1e8' },
+  dark:  { paper: '#1c1714', border: '#38322d', ink: '#eae3de', muted: '#98918b', ember: '#d95800', idle: '#322d29', warm: '#7d5238', line: '#38322d', rule: '#2a2420', card: '#221c18' },
 };
 const head = (W, H, t, label) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${label}">
 <style>${fontCss}text{font-family:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace}</style>
@@ -19,34 +19,61 @@ const label = (t, s, x, y) => `<text x="${x}" y="${y}" font-size="10" letter-spa
 const body = (t, lines, x, y, size = 11.5, lh = 18, fill = null) => lines.map((s, i) => `<text x="${x}" y="${y + i * lh}" font-size="${size}" fill="${fill || t.ink}">${s}</text>`).join('');
 const bullet = (t, x, y) => `<rect x="${x}" y="${y - 7}" width="5" height="5" rx="1" fill="${t.ember}"/>`;
 
-// Experience: timeline across the top, then the roles as text with ember bullets.
+// Experience: two stacked cards. The full-time card carries the weight (headline, tenure block, bullets); the
+// freelance card sits under it, outlined and shorter, as a portfolio list rather than a duration, so part-time
+// work alongside the role never reads as a second job or as job-hopping.
+const TENURE_START = { y: 2022, m: 10 }; // October 2022
+const NOW = new Date();
+const MONTHS_IN = (NOW.getUTCFullYear() - TENURE_START.y) * 12 + (NOW.getUTCMonth() + 1 - TENURE_START.m); // months completed before the current one
+const WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+const YEARS_LABEL = `${(WORDS[Math.round(MONTHS_IN / 12)] || Math.round(MONTHS_IN / 12)).toUpperCase()} YEARS AND COUNTING`;
+const FT_BULLETS = [
+  'Backend services for real-time betting games: game logic, ticket processing, settlement, and the feed systems that supply them.',
+  'Kubernetes operators and Helm-based deployment tooling for game services.',
+  'Planning and sequencing delivery across services: scoping, specs, and getting things to production.',
+];
+const FL_ROWS = [
+  ['BACKEND', 'Cardano DEX and launchpad', 'VyFinance · TMinusOne · 2025'],
+  ['WEB', 'WordPress sites', 'for clients, over the years'],
+  ['WEB', 'Custom plugins', 'tailored to what each client needed'],
+  ['WEB', 'Webshops', 'built and handed over'],
+];
+// Tenure block in the header grid's idiom: one row per year, twelve month cells, same 7.5px cells on a 9.3px step,
+// employed months lit, the current month as the pulsing dot, months not yet reached left as gaps.
+function tenureBlock(t, x0, y0) {
+  const step = 9.3, size = 7.5, years = [];
+  for (let y = TENURE_START.y; y <= NOW.getUTCFullYear(); y++) years.push(y);
+  let s = '';
+  years.forEach((y, r) => {
+    for (let m = 1; m <= 12; m++) {
+      const idx = (y - TENURE_START.y) * 12 + (m - TENURE_START.m);
+      if (idx > MONTHS_IN) continue;
+      const x = x0 + (m - 1) * step, yy = y0 + r * step;
+      if (idx === MONTHS_IN) s += `<circle cx="${(x + size / 2).toFixed(1)}" cy="${(yy + size / 2).toFixed(1)}" r="${size / 2}" fill="${t.ember}"/><circle cx="${(x + size / 2).toFixed(1)}" cy="${(yy + size / 2).toFixed(1)}" r="${size / 2}" fill="none" stroke="${t.ember}" stroke-width="1.2" opacity=".4"><animate attributeName="r" values="${size / 2};${size + 3};${size / 2}" dur="2.6s" repeatCount="indefinite"/><animate attributeName="opacity" values=".4;0;.4" dur="2.6s" repeatCount="indefinite"/></circle>`;
+      else s += `<rect x="${x.toFixed(1)}" y="${yy.toFixed(1)}" width="${size}" height="${size}" rx="1.5" fill="${idx < 0 ? t.idle : t.ember}"/>`;
+    }
+    s += `<text x="${(x0 + 12 * step + 4).toFixed(1)}" y="${(y0 + r * step + size - 0.5).toFixed(1)}" font-size="7.5" fill="${t.muted}">${String(y).slice(2)}</text>`;
+  });
+  return { svg: s, w: 12 * step + 20, h: years.length * step };
+}
 function experience(t) {
-  const W = 896, H = 372, x0 = 96, x1 = 848, y = 82;
-  const yr = v => x0 + ((v - 2022) / (2026.75 - 2022)) * (x1 - x0);
-  let s = head(W, H, t, 'Experience: Software Engineer at Sportradar, formerly NSoft, since October 2022; contract backend work on Cardano in 2025') + title(t, 'EXPERIENCE');
-  for (let v = 2022; v <= 2026; v++) s += `<line x1="${yr(v)}" y1="${y - 6}" x2="${yr(v)}" y2="${y + 6}" stroke="${t.line}"/><text x="${yr(v)}" y="${y + 24}" font-size="10.5" fill="${t.muted}" text-anchor="middle">${v}</text>`;
-  s += `<line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}" stroke="${t.line}"/>`;
-  const a = yr(2022.75), c = yr(2026.7);
-  s += `<rect x="${a}" y="${y - 22}" width="${c - a}" height="10" rx="2" fill="${t.ember}"/>`;
-  s += `<text x="${a}" y="${y - 30}" font-size="11.5" fill="${t.ink}">Sportradar (formerly NSoft) · Software Engineer</text>`;
-  s += `<circle cx="${c}" cy="${y - 17}" r="5" fill="${t.ember}" opacity=".25"><animate attributeName="r" values="5;11;5" dur="2.6s" repeatCount="indefinite"/><animate attributeName="opacity" values=".3;0;.3" dur="2.6s" repeatCount="indefinite"/></circle>`;
-  const c1a = yr(2025.17), c2b = yr(2025.67);
-  s += `<rect x="${c1a}" y="${y + 34}" width="${c2b - c1a}" height="6" rx="1.5" fill="${t.ember}" opacity=".7"/><text x="${c2b}" y="${y + 56}" font-size="10.5" fill="${t.muted}" text-anchor="end">TMinusOne · VyFinance, part-time contracts</text>`;
-  s += `<line x1="48" y1="${y + 74}" x2="${W - 48}" y2="${y + 74}" stroke="${t.rule}"/>`;
-  let ty = y + 102;
-  s += `<text x="48" y="${ty}" font-size="12.5" font-weight="700" fill="${t.ink}">Sportradar</text><text x="140" y="${ty}" font-size="11.5" fill="${t.muted}">formerly NSoft · Games iGaming team · Mostar</text>`;
-  s += body(t, ['Software Engineer, October 2022 to present'], 48, ty + 20, 11.5, 18, t.muted);
-  const bullets = [
-    ['Backend services for real-time betting games: game logic, ticket processing, settlement,', 'and the feed systems that supply them.'],
-    ['Kubernetes operators and Helm-based deployment tooling for game services.'],
-    ['Planning and sequencing delivery across services: scoping, specs, and getting things to production.'],
-  ];
-  ty += 48;
-  for (const lines of bullets) { s += bullet(t, 48, ty) + body(t, lines, 62, ty); ty += lines.length * 18 + 6; }
-  ty += 6;
-  s += `<text x="48" y="${ty}" font-size="12.5" font-weight="700" fill="${t.ink}">VyFinance · TMinusOne</text><text x="238" y="${ty}" font-size="11.5" fill="${t.muted}">part-time contracts · March to August 2025</text>`;
-  s += body(t, ['Backend for a decentralised exchange and a token launchpad on Cardano, including data ingestion over Blockfrost.'], 48, ty + 20);
-  return s + `</svg>`;
+  const W = 896, y0 = 50, xC = 48, wC = 800, hT = 214, hF = 150, H = y0 + hT + 14 + hF + 24;
+  let s = title(t, 'EXPERIENCE');
+  s += `<rect x="${xC}" y="${y0}" width="${wC}" height="${hT}" rx="5" fill="${t.card}" stroke="${t.border}"/>` + label(t, 'FULL-TIME', xC + 20, y0 + 26) + label(t, YEARS_LABEL, xC + wC - 20, y0 + 26).replace('<text ', '<text text-anchor="end" ');
+  s += `<text x="${xC + 20}" y="${y0 + 50}" font-size="12.5" font-weight="700" fill="${t.ink}">Sportradar (formerly NSoft) · Mostar</text><text x="${xC + 20}" y="${y0 + 68}" font-size="11" fill="${t.muted}">Software Engineer · October 2022 to now</text>`;
+  const tb = tenureBlock(t, xC + wC - 20 - (12 * 9.3 + 20), y0 + 40); s += tb.svg;
+  let ty = y0 + 100;
+  for (const b of FT_BULLETS) { const lines = wrapText(b, 92); s += bullet(t, xC + 20, ty) + body(t, lines, xC + 34, ty, 10.5, 16); ty += lines.length * 16 + 6; }
+  const fy = y0 + hT + 14;
+  s += `<rect x="${xC}" y="${fy}" width="${wC}" height="${hF}" rx="5" fill="none" stroke="${t.border}"/>` + label(t, 'FREELANCE · PART-TIME, ALONGSIDE THE ROLE', xC + 20, fy + 26);
+  FL_ROWS.forEach(([kind, name, sub], i) => { const x = xC + 20 + (i % 2) * 390, y = fy + 56 + Math.floor(i / 2) * 44; s += `<text x="${x}" y="${y}" font-size="8" letter-spacing="1.2" fill="${t.ember}" font-weight="700">${kind}</text><text x="${x + 70}" y="${y}" font-size="11" fill="${t.ink}">${name}</text><text x="${x + 70}" y="${y + 15}" font-size="9.5" fill="${t.muted}">${sub}</text>`; });
+  return head(W, H, t, `Experience: Software Engineer at Sportradar, formerly NSoft, since October 2022, ${YEARS_LABEL.toLowerCase()}. Freelance, part-time alongside the role: Cardano backends, WordPress sites, custom plugins, webshops.`) + s + `</svg>`;
+}
+function wrapText(text, max) {
+  const out = []; let line = '';
+  for (const word of text.split(' ')) { if ((line + ' ' + word).trim().length > max) { out.push(line.trim()); line = word; } else line += ' ' + word; }
+  if (line.trim()) out.push(line.trim());
+  return out;
 }
 // Technical scope: 20 ignition cells per area, lit count = depth, hotter to the right.
 function scope(t) {
@@ -120,28 +147,21 @@ function aboutNarrow(t) {
   return head(NW, H, t, 'About') + title(t, 'ABOUT', 30).replace('x="48"', `x="${NP}"`) + body(t, lines, NP, 56, 11.5, 17) + `</svg>`;
 }
 function experienceNarrow(t) {
-  const x0 = 34, x1 = 372, y = 78, yr = v => x0 + ((v - 2022) / (2026.75 - 2022)) * (x1 - x0);
+  const y0 = 50, xC = NP, wC = NW - 2 * NP; let ty = y0 + 26;
   let s = title(t, 'EXPERIENCE', 30).replace('x="48"', `x="${NP}"`);
-  for (let v = 2022; v <= 2026; v++) s += `<line x1="${yr(v)}" y1="${y - 5}" x2="${yr(v)}" y2="${y + 5}" stroke="${t.line}"/><text x="${yr(v)}" y="${y + 20}" font-size="9" fill="${t.muted}" text-anchor="middle">${v}</text>`;
-  s += `<line x1="${x0}" y1="${y}" x2="${x1}" y2="${y}" stroke="${t.line}"/>`;
-  const a = yr(2022.75), c = yr(2026.7);
-  s += `<rect x="${a}" y="${y - 20}" width="${c - a}" height="9" rx="2" fill="${t.ember}"/><text x="${a}" y="${y - 27}" font-size="10" fill="${t.ink}">Sportradar (formerly NSoft) · Software Engineer</text>`;
-  s += `<circle cx="${c}" cy="${y - 15.5}" r="4" fill="${t.ember}" opacity=".25"><animate attributeName="r" values="4;10;4" dur="2.6s" repeatCount="indefinite"/><animate attributeName="opacity" values=".3;0;.3" dur="2.6s" repeatCount="indefinite"/></circle>`;
-  const c1a = yr(2025.17), c2b = yr(2025.67);
-  s += `<rect x="${c1a}" y="${y + 28}" width="${c2b - c1a}" height="5" rx="1.5" fill="${t.ember}" opacity=".7"/><text x="${c2b}" y="${y + 47}" font-size="9" fill="${t.muted}" text-anchor="end">TMinusOne · VyFinance, part-time contracts</text>`;
-  let ty = y + 74;
-  s += `<line x1="${NP}" y1="${ty - 14}" x2="${NW - NP}" y2="${ty - 14}" stroke="${t.rule}"/>`;
-  s += `<text x="${NP}" y="${ty}" font-size="12" font-weight="700" fill="${t.ink}">Sportradar</text><text x="100" y="${ty}" font-size="10.5" fill="${t.muted}">formerly NSoft · Games iGaming · Mostar</text>`;
-  s += body(t, ['Software Engineer, October 2022 to present'], NP, ty + 18, 10.5, 16, t.muted); ty += 40;
-  for (const b of ['Backend services for real-time betting games: game logic, ticket processing, settlement, and the feed systems that supply them.', 'Kubernetes operators and Helm-based deployment tooling for game services.', 'Planning and sequencing delivery across services: scoping, specs, and getting things to production.']) {
-    const lines = wrap(b, 48); s += bullet(t, NP, ty) + body(t, lines, NP + 12, ty, 11, 16); ty += lines.length * 16 + 6;
-  }
-  ty += 4;
-  s += `<text x="${NP}" y="${ty}" font-size="12" font-weight="700" fill="${t.ink}">VyFinance · TMinusOne</text>`;
-  s += body(t, ['part-time contracts · March to August 2025'], NP, ty + 16, 10.5, 16, t.muted); ty += 34;
-  const l2 = wrap('Backend for a decentralised exchange and a token launchpad on Cardano, including data ingestion over Blockfrost.', NCH);
-  s += body(t, l2, NP, ty, 11, 16); ty += l2.length * 16;
-  return head(NW, ty + 12, t, 'Experience') + s + `</svg>`;
+  let card = label(t, 'FULL-TIME', xC + 16, ty) + label(t, YEARS_LABEL, xC + wC - 16, ty).replace('<text ', '<text text-anchor="end" '); ty += 22;
+  card += `<text x="${xC + 16}" y="${ty}" font-size="12" font-weight="700" fill="${t.ink}">Sportradar (formerly NSoft)</text>`; ty += 16;
+  card += `<text x="${xC + 16}" y="${ty}" font-size="10.5" fill="${t.muted}">Software Engineer · Mostar · October 2022 to now</text>`; ty += 14;
+  const tb = tenureBlock(t, xC + 16, ty); card += tb.svg; ty += tb.h + 16;
+  for (const b of FT_BULLETS) { const lines = wrap(b, 44); card += bullet(t, xC + 16, ty) + body(t, lines, xC + 28, ty, 10.5, 15); ty += lines.length * 15 + 6; }
+  const hT = ty - y0 + 6;
+  s += `<rect x="${xC}" y="${y0}" width="${wC}" height="${hT}" rx="5" fill="${t.card}" stroke="${t.border}"/>` + card;
+  const fy = y0 + hT + 12; let ry = fy + 26;
+  let fl = label(t, 'FREELANCE · PART-TIME, ALONGSIDE THE ROLE', xC + 16, ry); ry += 26;
+  for (const [kind, name, sub] of FL_ROWS) { fl += `<text x="${xC + 16}" y="${ry}" font-size="8" letter-spacing="1.2" fill="${t.ember}" font-weight="700">${kind}</text><text x="${xC + 82}" y="${ry}" font-size="11" fill="${t.ink}">${name}</text><text x="${xC + 82}" y="${ry + 14}" font-size="9.5" fill="${t.muted}">${sub}</text>`; ry += 36; }
+  const hF = ry - fy - 8;
+  s += `<rect x="${xC}" y="${fy}" width="${wC}" height="${hF}" rx="5" fill="none" stroke="${t.border}"/>` + fl;
+  return head(NW, fy + hF + 20, t, 'Experience') + s + `</svg>`;
 }
 function scopeNarrow(t) {
   const rows = [

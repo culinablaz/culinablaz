@@ -16,7 +16,7 @@
   <source media="(prefers-color-scheme: dark) and (max-width: 640px)" srcset="assets/experience-narrow-dark.svg">
   <source media="(max-width: 640px)" srcset="assets/experience-narrow-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/experience-dark.svg">
-  <img alt="Experience: Software Engineer at Sportradar, formerly NSoft, since October 2022. Contract backend work for VyFinance and TMinusOne on Cardano in 2025." src="assets/experience-light.svg" width="100%">
+  <img alt="Experience: full-time Software Engineer at Sportradar, formerly NSoft, since October 2022. Freelance, part-time alongside the role: Cardano backends for VyFinance and TMinusOne in 2025, WordPress sites, custom plugins and webshops for clients." src="assets/experience-light.svg" width="100%">
 </picture>
 
 <picture>

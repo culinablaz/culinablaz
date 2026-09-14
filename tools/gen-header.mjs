@@ -83,6 +83,13 @@ function contributions() {
   }
   try { return JSON.parse(readFileSync(TOOLS + '/contributions.json', 'utf8')); } catch { return null; }
 }
+// Caption: the total since the first year, and when the workflow last refreshed it.
+function caption(data, firstYear, long) {
+  if (!data) return `CONTRIBUTIONS SINCE ${firstYear}`;
+  const total = Object.values(data.years).flat().reduce((a, v) => a + (v || 0), 0).toLocaleString('en-US');
+  const stamp = data.updatedAt ? data.updatedAt.replace('T', ' ').slice(0, 16) + ' UTC' : data.updated;
+  return `${total} CONTRIBUTIONS SINCE ${firstYear}` + (stamp ? (long ? ` · UPDATED ${stamp}` : ` · ${stamp}`) : '');
+}
 // Cells are 7.5px on a 9.3px step: 53 weeks fit the 491px the left panel has beside the year labels.
 // Levels are quartiles of the non-zero weeks, so the scale adapts to however busy the years were.
 function grid(t) {
@@ -102,7 +109,7 @@ function grid(t) {
     }
     s += `<text x="${(x0 + 53 * step + 4).toFixed(1)}" y="${(y0 + r * step + size - 0.5).toFixed(1)}" font-size="7.5" fill="${t.muted}">${String(y).slice(2)}</text>`;
   });
-  const cap = `CONTRIBUTIONS SINCE ${years[0]} · ONE ROW PER YEAR` + (data && data.updated ? ` · UPDATED ${data.updated}` : '');
+  const cap = caption(data, years[0], true);
   return s + `<text x="48" y="${(y0 + years.length * step + 22).toFixed(1)}" font-size="9.5" letter-spacing="1.5" fill="${t.muted}">${cap}</text>`;
 }
 
@@ -111,7 +118,7 @@ function header(t) {
   // 11 glyphs at 46px with -1.4px tracking put the cursor at x≈346.
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 896 300" width="896" height="300" role="img" aria-labelledby="t d">
 <title id="t">Blaž Čulina</title>
-<desc id="d">Software engineer at Sportradar, formerly NSoft. Java, Spring, Kubernetes, Kafka, PostgreSQL. Contribution grid since 2022, one row per year. Portrait on the right.</desc>
+<desc id="d">Software engineer at Sportradar, formerly NSoft. Java, Spring, Kubernetes, Kafka, PostgreSQL. Contribution grid since 2022. Portrait on the right.</desc>
 <style>${fontCss}
 text{font-family:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 .p{font-size:7px;white-space:pre}
@@ -162,7 +169,7 @@ function gridAt(t, x0, y0, step, size, fs) {
     }
     s += `<text x="${(x0 + 53 * step + 3).toFixed(1)}" y="${(y0 + r * step + size - 0.3).toFixed(1)}" font-size="${fs}" fill="${t.muted}">${String(y).slice(2)}</text>`;
   });
-  const cap = `CONTRIBUTIONS SINCE ${years[0]} · ONE ROW PER YEAR` + (data && data.updated ? ` · ${data.updated}` : '');
+  const cap = caption(data, years[0], false);
   return s + `<text x="${x0}" y="${(y0 + years.length * step + 16).toFixed(1)}" font-size="8" letter-spacing="1" fill="${t.muted}">${cap}</text>`;
 }
 function headerNarrow(t) {
@@ -171,7 +178,7 @@ function headerNarrow(t) {
   // 11 glyphs at 32px with -1px tracking put the cursor at x≈226.
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-labelledby="t d">
 <title id="t">Blaž Čulina</title>
-<desc id="d">Software engineer at Sportradar, formerly NSoft. Java, Spring, Kubernetes, Kafka, PostgreSQL. Contribution grid since 2022, one row per year. Portrait below.</desc>
+<desc id="d">Software engineer at Sportradar, formerly NSoft. Java, Spring, Kubernetes, Kafka, PostgreSQL. Contribution grid since 2022. Portrait below.</desc>
 <style>${fontCss}
 text{font-family:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 .p{font-size:7px;white-space:pre}

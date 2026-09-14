@@ -27,5 +27,5 @@ for (let y = firstYear; y <= lastYear; y++) {
   }
   years[y] = arr;
 }
-writeFileSync(out, JSON.stringify({ login, updated: now.toISOString().slice(0, 10), years }) + '\n');
+writeFileSync(out, JSON.stringify({ login, updated: now.toISOString().slice(0, 10), updatedAt: now.toISOString(), years }) + '\n');
 console.log('wrote', out, Object.keys(years).join(' '));
