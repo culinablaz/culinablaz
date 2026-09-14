@@ -33,6 +33,11 @@
   <img alt="Elsewhere: open source patches, a self-hosted Kubernetes homelab, computer science at FSRE, Croatian, English and German." src="assets/elsewhere-light.svg" width="100%">
 </picture>
 
-<a href="https://www.linkedin.com/in/culinablaz"><picture><source media="(prefers-color-scheme: dark) and (max-width: 640px)" srcset="assets/link-linkedin-narrow-dark.svg">
-  <source media="(max-width: 640px)" srcset="assets/link-linkedin-narrow-light.svg">
-  <source media="(prefers-color-scheme: dark)" srcset="assets/link-linkedin-dark.svg"><img alt="Contact: LinkedIn, /in/culinablaz" src="assets/link-linkedin-light.svg" width="100%"></picture></a>
+<a href="https://www.linkedin.com/in/culinablaz">
+  <picture>
+    <source media="(prefers-color-scheme: dark) and (max-width: 640px)" srcset="assets/link-linkedin-narrow-dark.svg">
+    <source media="(max-width: 640px)" srcset="assets/link-linkedin-narrow-light.svg">
+    <source media="(prefers-color-scheme: dark)" srcset="assets/link-linkedin-dark.svg">
+    <img alt="Contact: LinkedIn, /in/culinablaz" src="assets/link-linkedin-light.svg" width="100%">
+  </picture>
+</a>
