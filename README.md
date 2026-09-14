@@ -23,7 +23,7 @@
   <source media="(prefers-color-scheme: dark) and (max-width: 640px)" srcset="assets/scope-narrow-dark.svg">
   <source media="(max-width: 640px)" srcset="assets/scope-narrow-light.svg">
   <source media="(prefers-color-scheme: dark)" srcset="assets/scope-dark.svg">
-  <img alt="Technical scope by depth: backend in Java and Spring Boot; project planning; Kubernetes, Helm, Docker, Jenkins, GitHub Actions; PostgreSQL and Kafka; Linux, Bash, Python, Rust; coding agents; Cardano; Vue and TypeScript." src="assets/scope-light.svg" width="100%">
+  <img alt="Technical scope by depth: backend in Java and Spring Boot; AI tooling, daily agent usage and research, superpowers contributor; project planning; Kubernetes, Helm, Docker, Jenkins, GitHub Actions; PostgreSQL and Kafka; Linux, Bash, Python, Rust; Cardano; Vue and TypeScript." src="assets/scope-light.svg" width="100%">
 </picture>
 
 <picture>

@@ -52,16 +52,16 @@ function experience(t) {
 function scope(t) {
   const rows = [
     ['Backend', 18, 'Java · Spring Boot · service design · APIs · data modelling'],
+    ['AI tooling', 17, 'Daily agent usage and research · superpowers contributor'],
     ['Planning', 16, 'Scoping · specs · sequencing the build · shipping'],
     ['Platform', 15, 'Kubernetes · Helm · Docker · Jenkins · GitHub Actions'],
     ['Data', 10, 'PostgreSQL · Kafka · Flyway · Testcontainers'],
     ['Systems', 11, 'Linux · Bash · Python for tooling · Rust at patch level'],
-    ['AI tooling', 12, 'Coding agents daily · superpowers contributor'],
     ['Blockchain', 8, 'Cardano · Blockfrost, from two contracts'],
     ['Frontend', 6, 'Vue 3 · TypeScript · a deliberate focus for 2026'],
   ];
   const W = 896, rowH = 34, top = 44, H = top + rows.length * rowH + 22;
-  let s = head(W, H, t, 'Technical scope by depth: backend and planning deepest, then platform, AI tooling, systems, data, blockchain, frontend') + title(t, 'TECHNICAL SCOPE') + label(t, 'DEPTH', 810, 30);
+  let s = head(W, H, t, 'Technical scope by depth: backend and AI tooling deepest, then planning, platform, systems, data, blockchain, frontend') + title(t, 'TECHNICAL SCOPE') + label(t, 'DEPTH', 810, 30);
   rows.forEach(([name, n, note], i) => {
     const y = top + i * rowH;
     s += `<text x="48" y="${y + 16}" font-size="13" fill="${t.ink}">${name}</text>`;
@@ -146,11 +146,11 @@ function experienceNarrow(t) {
 function scopeNarrow(t) {
   const rows = [
     ['Backend', 18, 'Java · Spring Boot · service design · APIs · data modelling'],
+    ['AI tooling', 17, 'Daily agent usage and research · superpowers contributor'],
     ['Planning', 16, 'Scoping · specs · sequencing the build · shipping'],
     ['Platform', 15, 'Kubernetes · Helm · Docker · Jenkins · GitHub Actions'],
     ['Data', 10, 'PostgreSQL · Kafka · Flyway · Testcontainers'],
     ['Systems', 11, 'Linux · Bash · Python for tooling · Rust at patch level'],
-    ['AI tooling', 12, 'Coding agents daily · superpowers contributor'],
     ['Blockchain', 8, 'Cardano · Blockfrost, from two contracts'],
     ['Frontend', 6, 'Vue 3 · TypeScript · a deliberate focus for 2026'],
   ];
