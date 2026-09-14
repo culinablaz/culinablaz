@@ -144,3 +144,62 @@ for (const [name, t] of Object.entries(themes)) {
   writeFileSync(`${OUT}/header-${name}.svg`, svg);
   console.log(`header-${name}.svg`, t.portrait, svg.length, 'bytes');
 }
+
+// Narrow variant for phones (400px wide, served below 640px): name and grid on top, portrait panel underneath.
+function gridAt(t, x0, y0, step, size, fs) {
+  const data = contributions(), years = data ? Object.keys(data.years).sort() : ['2022', '2023', '2024', '2025', '2026'];
+  const all = data ? years.flatMap(y => data.years[y]).filter(v => v > 0).sort((a, b) => a - b) : [];
+  const q = k => all.length ? all[Math.min(all.length - 1, Math.floor(all.length * k))] : Infinity;
+  const cut = [q(0.25), q(0.5), q(0.75)];
+  const level = v => v == null || v === 0 ? 0 : v <= cut[0] ? 1 : v <= cut[1] ? 2 : v <= cut[2] ? 3 : 4;
+  let s = '';
+  years.forEach((y, r) => {
+    const row = data ? data.years[y] : Array(53).fill(null);
+    for (let w = 0; w < 53; w++) {
+      const v = row[w], lv = level(v);
+      if (v === null && data) continue;
+      s += `<rect x="${(x0 + w * step).toFixed(1)}" y="${(y0 + r * step).toFixed(1)}" width="${size}" height="${size}" rx="1.2" fill="${t.levels[lv]}"${lv ? ` class="g" style="animation-delay:${(w * 0.06 + r * 0.1).toFixed(2)}s"` : ''}/>`;
+    }
+    s += `<text x="${(x0 + 53 * step + 3).toFixed(1)}" y="${(y0 + r * step + size - 0.3).toFixed(1)}" font-size="${fs}" fill="${t.muted}">${String(y).slice(2)}</text>`;
+  });
+  const cap = `CONTRIBUTIONS SINCE ${years[0]} · ONE ROW PER YEAR` + (data && data.updated ? ` · ${data.updated}` : '');
+  return s + `<text x="${x0}" y="${(y0 + years.length * step + 16).toFixed(1)}" font-size="8" letter-spacing="1" fill="${t.muted}">${cap}</text>`;
+}
+function headerNarrow(t) {
+  const W = 400, H = 496, split = 196;
+  const portrait = t.portrait === 'ascii' ? ascii(57, split + 6) : t.portrait === 'cells' ? cells(56, split + 6) : halftone(56, split + 6);
+  // 11 glyphs at 32px with -1px tracking put the cursor at x≈226.
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-labelledby="t d">
+<title id="t">Blaž Čulina</title>
+<desc id="d">Software engineer at Sportradar, formerly NSoft. Java, Spring, Kubernetes, Kafka, PostgreSQL. Contribution grid since 2022, one row per year. Portrait below.</desc>
+<style>${fontCss}
+text{font-family:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+.p{font-size:7px;white-space:pre}
+.g{animation:glow 4.5s ease-in-out infinite}
+@keyframes glow{0%,80%,100%{opacity:1}30%{opacity:.5}}
+.d{animation:pulse 3.4s ease-in-out infinite}
+@keyframes pulse{0%,70%,100%{opacity:.78}22%{opacity:1}}
+.c{animation:ig 4.2s ease-in-out infinite}
+@keyframes ig{0%,75%,100%{opacity:1}20%{opacity:.62}}
+.cur{fill:${t.ember};animation:blink 1.1s steps(1) infinite}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+@media (prefers-reduced-motion:reduce){.g,.cur,.d,.c{animation:none}}
+</style>
+<defs><clipPath id="card"><rect width="${W}" height="${H}" rx="6"/></clipPath></defs>
+<g clip-path="url(#card)"><rect width="${W}" height="${H}" fill="${t.paper}"/><rect y="${split}" width="${W}" height="${H - split}" fill="${t.panel}"/></g>
+<line x1="0" y1="${split + 0.5}" x2="${W}" y2="${split + 0.5}" stroke="${t.seam}"/>
+<rect x=".5" y=".5" width="${W - 1}" height="${H - 1}" rx="6" fill="none" stroke="${t.border}"/>
+<circle cx="25" cy="35" r="7" fill="${t.ember}" opacity=".14"/><circle cx="25" cy="35" r="3.5" fill="${t.ember}"/>
+<text x="38" y="38.5" font-size="9.5" letter-spacing="1.6" fill="${t.muted}">SOFTWARE ENGINEER · SPORTRADAR</text>
+<text x="20" y="82" font-size="32" font-weight="700" letter-spacing="-1" fill="${t.ink}">Blaž Čulina</text>
+<rect class="cur" x="226" y="78" width="14" height="4.5"/>
+<text x="20" y="106" font-size="10.5" fill="${t.muted}">Java · Spring · Kubernetes · Kafka · PostgreSQL</text>
+${gridAt(t, 20, 124, 6.7, 5.3, 6)}
+${portrait}</svg>
+`;
+}
+for (const [name, t] of Object.entries(themes)) {
+  const svg = headerNarrow(t);
+  writeFileSync(`${OUT}/header-narrow-${name}.svg`, svg);
+  console.log(`header-narrow-${name}.svg`, t.portrait, svg.length, 'bytes');
+}
