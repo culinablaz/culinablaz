@@ -2,6 +2,8 @@
 // four widths. GitHub's README column ranges from about 310px on a phone to 846px on a wide desktop, so each panel is
 // laid out parametrically by width and rendered at 330, 500, 720 and 896px (suffixes -narrow, -medium, -wide, none).
 // Line breaks inside panels are computed here because SVG text does not wrap; Plex Mono advances 0.6em per glyph.
+// Each panel's aria-label is its complete wording; tools/gen-readme.mjs copies it into the README's alt attributes, so
+// screen readers and search engines get the whole page even though the words sit inside images.
 // usage: node tools/gen-sections.mjs tools assets
 import { readFileSync, writeFileSync } from 'node:fs';
 const [TOOLS, OUT] = process.argv.slice(2);
@@ -15,7 +17,11 @@ const TIERS = { '-narrow': 330, '-medium': 500, '-wide': 720, '': 896 };
 const pad = W => W >= 720 ? 48 : W >= 500 ? 32 : 20;
 const chars = (px, fs) => Math.max(8, Math.floor(px / (fs * 0.6)));
 function wrap(text, max) { const out = []; let line = ''; for (const w of text.split(' ')) { if ((line + ' ' + w).trim().length > max) { out.push(line.trim()); line = w; } else line += ' ' + w; } if (line.trim()) out.push(line.trim()); return out; }
-const head = (W, H, t, label) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${label}">
+const attr = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+const commas = s => s.replaceAll(' · ', ', '); // middle dots read badly aloud
+const sentence = s => commas(s).replace(/([^.!?])$/, '$1.');
+const titleCase = s => s[0] + s.slice(1).toLowerCase();
+const head = (W, H, t, label) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${attr(label)}">
 <style>${fontCss}text{font-family:'IBM Plex Mono',ui-monospace,Menlo,Consolas,monospace}.g{animation:gl 5s ease-in-out infinite}@keyframes gl{0%,80%,100%{opacity:1}15%{opacity:.55}}@media (prefers-reduced-motion:reduce){.g{animation:none}}</style>
 <rect x=".5" y=".5" width="${W - 1}" height="${H - 1}" rx="6" fill="${t.paper}" stroke="${t.border}"/>`;
 const lerpHex = (a, b, f) => '#' + [1, 3, 5].map(i => Math.round(parseInt(a.slice(i, i + 2), 16) + (parseInt(b.slice(i, i + 2), 16) - parseInt(a.slice(i, i + 2), 16)) * f).toString(16).padStart(2, '0')).join('');
@@ -29,7 +35,7 @@ const ABOUT = 'Software engineer at Sportradar (formerly NSoft), based between I
 function about(t, W) {
   const P = pad(W), fs = W >= 720 ? 12.5 : 11.5, lh = W >= 720 ? 21 : 17;
   const lines = wrap(ABOUT, chars(W - 2 * P, fs));
-  return head(W, 54 + lines.length * lh + 10, t, 'About: software engineer at Sportradar, formerly NSoft, between Imotski and Mostar; backend specialist, careful in planning, wide in range') + title(t, 'ABOUT', P) + body(t, lines, P, 60, fs, lh) + `</svg>`;
+  return head(W, 54 + lines.length * lh + 10, t, 'About: ' + ABOUT) + title(t, 'ABOUT', P) + body(t, lines, P, 60, fs, lh) + `</svg>`;
 }
 
 // ---------- Experience: two stacked cards ----------
@@ -49,6 +55,8 @@ const FL_ROWS = [
   ['WEB', 'Custom plugins', 'tailored to what each client needed'],
   ['WEB', 'Webshops', 'built and handed over'],
 ];
+const EXPERIENCE_ALT = `Experience. Full-time: Sportradar (formerly NSoft), Mostar. Software Engineer, October 2022 to now, ${YEARS_LABEL.toLowerCase()}. ${FT_BULLETS.join(' ')} Freelance, part-time alongside the role. `
+  + [...new Set(FL_ROWS.map(r => r[0]))].map(k => `${titleCase(k)}: ${FL_ROWS.filter(r => r[0] === k).map(([, n, sub]) => `${n}, ${commas(sub)}`).join('; ')}.`).join(' ');
 // Tenure block in the header grid's idiom: one row per year, twelve month cells, employed months lit, the current
 // month as the pulsing dot, months not yet reached left as gaps.
 function tenureBlock(t, x0, y0) {
@@ -92,7 +100,7 @@ function experience(t, W) {
   });
   const hF = 26 + 30 + Math.ceil(FL_ROWS.length / cols) * rowH - 6;
   s += `<rect x="${xC}" y="${fy}" width="${wC}" height="${hF}" rx="5" fill="none" stroke="${t.border}"/>` + fl;
-  return head(W, fy + hF + 20, t, `Experience: Software Engineer at Sportradar, formerly NSoft, since October 2022, ${YEARS_LABEL.toLowerCase()}. Freelance, part-time alongside the role: Cardano backends, WordPress sites, custom plugins, webshops.`) + s + `</svg>`;
+  return head(W, fy + hF + 20, t, EXPERIENCE_ALT) + s + `</svg>`;
 }
 
 // ---------- Technical scope: heat rows ----------
@@ -117,7 +125,7 @@ function scope(t, W) {
     if (side) { s += `<text x="${P + nameW + 20 * cellStep + 20}" y="${y + 13}" font-size="${noteFs}" fill="${t.muted}">${note}</text>`; y += 34; }
     else { const lines = wrap(note, chars(W - 2 * P, noteFs)); s += body(t, lines, P, y + 31, noteFs, noteLh, t.muted); y += 31 + lines.length * noteLh - 2; }
   }
-  return head(W, y + (side ? 10 : 14), t, 'Technical scope by depth: backend and AI tooling deepest, then planning, platform, systems, data, blockchain, frontend') + s + `</svg>`;
+  return head(W, y + (side ? 10 : 14), t, 'Technical scope, deepest areas first. ' + SCOPE.map(([name, , note]) => `${name}: ${sentence(note)}`).join(' ')) + s + `</svg>`;
 }
 
 // ---------- Elsewhere ----------
@@ -135,13 +143,13 @@ function elsewhere(t, W) {
     if (side) { const lines = wrap(text, chars(W - 2 * P - labelW, fs)); s += label(t, k, P, y) + body(t, lines, P + labelW, y, fs, lh); y += lines.length * lh + 14; }
     else { const lines = wrap(text, chars(W - 2 * P, fs)); s += label(t, k, P, y) + body(t, lines, P, y + 17, fs, lh); y += 17 + lines.length * lh + 12; }
   }
-  return head(W, y + (side ? 6 : 0), t, 'Elsewhere: open source patches, a self-hosted Kubernetes homelab, computer science at FSRE, Croatian, English and German') + s + `</svg>`;
+  return head(W, y + (side ? 6 : 0), t, 'Elsewhere. ' + ELSEWHERE.map(([k, text]) => `${titleCase(k)}: ${sentence(text)}`).join(' ')) + s + `</svg>`;
 }
 
 // ---------- LinkedIn card: the README wraps it in the real link ----------
 function card(t, W) {
   const P = pad(W), H = 72;
-  return head(W, H, t, 'Contact: LinkedIn, /in/culinablaz') + label(t, 'CONTACT', P, 27) + `<text x="${P}" y="50" font-size="13" font-weight="700" fill="${t.ink}">LinkedIn · /in/culinablaz</text><path d="M${W - P - 18} 44h18m-6 -6l6 6l-6 6" fill="none" stroke="${t.ember}" stroke-width="1.75" stroke-linecap="square"/></svg>`;
+  return head(W, H, t, 'Contact: LinkedIn profile, linkedin.com/in/culinablaz') + label(t, 'CONTACT', P, 27) + `<text x="${P}" y="50" font-size="13" font-weight="700" fill="${t.ink}">LinkedIn · /in/culinablaz</text><path d="M${W - P - 18} 44h18m-6 -6l6 6l-6 6" fill="none" stroke="${t.ember}" stroke-width="1.75" stroke-linecap="square"/></svg>`;
 }
 
 for (const [name, t] of Object.entries(themes)) for (const [suffix, W] of Object.entries(TIERS)) for (const [k, fn] of Object.entries({ about, experience, scope, elsewhere, 'link-linkedin': card })) writeFileSync(`${OUT}/${k}${suffix}-${name}.svg`, fn(t, W));

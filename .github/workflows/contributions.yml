@@ -1,6 +1,7 @@
 name: contributions
 
-# Refreshes the contribution grid in the header and the tenure block in the experience panel once a day. The bot's own commit carries [skip ci] and the
+# Refreshes the contribution grid in the header and the tenure block in the experience panel once a day, and regenerates
+# README.md from the panels so its alt text stays their exact wording. The bot's own commit carries [skip ci] and the
 # actor guard below, so a refresh never triggers another refresh.
 on:
   schedule:
@@ -26,9 +27,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: node tools/gen-header.mjs tools assets
       - run: node tools/gen-sections.mjs tools assets
+      - run: node tools/gen-readme.mjs assets README.md
       - run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add tools/contributions.json assets/*.svg
+          git add tools/contributions.json assets/*.svg README.md
           git diff --cached --quiet || git commit -m "chore: refresh contribution grid [skip ci]"
           git push

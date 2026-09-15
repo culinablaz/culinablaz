@@ -130,9 +130,12 @@ text{font-family:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,mono
 @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
 @media (prefers-reduced-motion:reduce){.g,.cur,.d,.c{animation:none}}
 </style>`;
-const open = (t, W, H, desc) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-labelledby="t d">
+// The header's accessible description; tools/gen-readme.mjs copies title and desc into the README's alt. The
+// contribution total is left out on purpose so the README does not change with every daily refresh.
+const DESC = `Software Engineer at Sportradar, formerly NSoft. Java, Spring, Kubernetes, Kafka, PostgreSQL. Contribution grid, one row per year since 2022, refreshed daily. Portrait in ${darkStyle === 'ascii' ? 'ASCII' : darkStyle === 'cells' ? 'grid cells' : 'halftone dots'}.`;
+const open = (t, W, H) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-labelledby="t d">
 <title id="t">Blaž Čulina</title>
-<desc id="d">Software engineer at Sportradar, formerly NSoft. Java, Spring, Kubernetes, Kafka, PostgreSQL. Contribution grid since 2022. ${desc}</desc>
+<desc id="d">${DESC}</desc>
 ${STYLE(t)}
 <defs><clipPath id="card"><rect width="${W}" height="${H}" rx="6"/></clipPath></defs>`;
 const frame = (t, W, H) => `<rect x=".5" y=".5" width="${W - 1}" height="${H - 1}" rx="6" fill="none" stroke="${t.border}"/>`;
@@ -154,7 +157,7 @@ function header(t, W) {
     const step = Math.floor((W - 2 * P - 22) / 53 * 10) / 10;
     const g = grid(t, P, tb.bottom + 18, step, 6, false);
     const split = Math.round(tb.bottom + 18 + g.h + 12), PH = W >= 500 ? 250 : 200, H = split + PH; // a shorter portrait panel on phones: the face, not a full screen of it
-    return open(t, W, H, 'Portrait below.') + `<g clip-path="url(#card)"><rect width="${W}" height="${H}" fill="${t.paper}"/><rect y="${split}" width="${W}" height="${PH}" fill="${t.panel}"/></g>
+    return open(t, W, H) + `<g clip-path="url(#card)"><rect width="${W}" height="${H}" fill="${t.paper}"/><rect y="${split}" width="${W}" height="${PH}" fill="${t.panel}"/></g>
 <line x1="0" y1="${split + 0.5}" x2="${W}" y2="${split + 0.5}" stroke="${t.seam}"/>${frame(t, W, H)}
 ${tb.svg}
 ${g.svg}
@@ -165,7 +168,7 @@ ${portrait(t, 0, split, W, PH)}</svg>
   const tb = textBlock(t, P, 36, nameFs);
   const step = Math.min(9.3, Math.floor((L - 2 * P - 22) / 53 * 10) / 10);
   const g = grid(t, P, tb.bottom + 26, step, 7.5, true);
-  return open(t, W, H, 'Portrait on the right.') + `<g clip-path="url(#card)"><rect width="${W}" height="${H}" fill="${t.paper}"/><rect x="${L}" width="${PW}" height="${H}" fill="${t.panel}"/></g>
+  return open(t, W, H) + `<g clip-path="url(#card)"><rect width="${W}" height="${H}" fill="${t.paper}"/><rect x="${L}" width="${PW}" height="${H}" fill="${t.panel}"/></g>
 <line x1="${L + 0.5}" y1="0" x2="${L + 0.5}" y2="${H}" stroke="${t.seam}"/>${frame(t, W, H)}
 ${tb.svg}
 ${g.svg}
