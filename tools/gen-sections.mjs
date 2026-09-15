@@ -25,11 +25,11 @@ const body = (t, lines, x, y, fs = 11.5, lh = 18, fill = null, weight = 400) => 
 const bullet = (t, x, y) => `<rect x="${x}" y="${y - 7}" width="5" height="5" rx="1" fill="${t.ember}"/>`;
 
 // ---------- About ----------
-const ABOUT = 'Software engineer at Sportradar (formerly NSoft), based between Imotski, Croatia and Mostar, Bosnia and Herzegovina. Backend is where I go deepest: four years of production Java, Spring and Kubernetes behind real-time betting games, where a wrong answer costs money. I plan work as carefully as I build it, and around that core I cover a lot of ground. If it has to ship, I learn it and ship it.';
+const ABOUT = 'Software engineer at Sportradar (formerly NSoft), based between Imotski, Croatia and Mostar, Bosnia and Herzegovina. Backend specialist: four years of production Java, Spring and Kubernetes behind real-time betting games, where a wrong answer costs money. I plan work as carefully as I build it, and around that core I cover a lot of ground. If it has to ship, I learn it and ship it.';
 function about(t, W) {
   const P = pad(W), fs = W >= 720 ? 12.5 : 11.5, lh = W >= 720 ? 21 : 17;
   const lines = wrap(ABOUT, chars(W - 2 * P, fs));
-  return head(W, 54 + lines.length * lh + 10, t, 'About: software engineer at Sportradar, formerly NSoft, between Imotski and Mostar; deepest in backend, careful in planning, wide in range') + title(t, 'ABOUT', P) + body(t, lines, P, 60, fs, lh) + `</svg>`;
+  return head(W, 54 + lines.length * lh + 10, t, 'About: software engineer at Sportradar, formerly NSoft, between Imotski and Mostar; backend specialist, careful in planning, wide in range') + title(t, 'ABOUT', P) + body(t, lines, P, 60, fs, lh) + `</svg>`;
 }
 
 // ---------- Experience: two stacked cards ----------

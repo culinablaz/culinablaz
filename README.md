@@ -20,7 +20,7 @@
     <source media="(max-width: 491px), (min-width: 768px) and (max-width: 794px)" srcset="assets/about-narrow-light.svg">
     <source media="(max-width: 681px), (min-width: 795px) and (max-width: 984px), (min-width: 1012px) and (max-width: 1048px)" srcset="assets/about-medium-light.svg">
     <source media="(max-width: 767px), (min-width: 985px) and (max-width: 1208px)" srcset="assets/about-wide-light.svg">
-    <img alt="Software engineer at Sportradar, formerly NSoft, based between Imotski, Croatia and Mostar, Bosnia and Herzegovina. Deepest in backend: four years of production Java, Spring and Kubernetes behind real-time betting games. Plans work carefully and covers a lot of ground." src="assets/about-light.svg" width="100%">
+    <img alt="Software engineer at Sportradar, formerly NSoft, based between Imotski, Croatia and Mostar, Bosnia and Herzegovina. Backend specialist: four years of production Java, Spring and Kubernetes behind real-time betting games. Plans work carefully and covers a lot of ground." src="assets/about-light.svg" width="100%">
   </picture>
 </a>
 <a href="#gh-dark-mode-only">
@@ -28,7 +28,7 @@
     <source media="(max-width: 491px), (min-width: 768px) and (max-width: 794px)" srcset="assets/about-narrow-dark.svg">
     <source media="(max-width: 681px), (min-width: 795px) and (max-width: 984px), (min-width: 1012px) and (max-width: 1048px)" srcset="assets/about-medium-dark.svg">
     <source media="(max-width: 767px), (min-width: 985px) and (max-width: 1208px)" srcset="assets/about-wide-dark.svg">
-    <img alt="Software engineer at Sportradar, formerly NSoft, based between Imotski, Croatia and Mostar, Bosnia and Herzegovina. Deepest in backend: four years of production Java, Spring and Kubernetes behind real-time betting games. Plans work carefully and covers a lot of ground." src="assets/about-dark.svg" width="100%">
+    <img alt="Software engineer at Sportradar, formerly NSoft, based between Imotski, Croatia and Mostar, Bosnia and Herzegovina. Backend specialist: four years of production Java, Spring and Kubernetes behind real-time betting games. Plans work carefully and covers a lot of ground." src="assets/about-dark.svg" width="100%">
   </picture>
 </a>
 

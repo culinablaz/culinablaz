@@ -1,6 +1,6 @@
 // Generates the header in light and dark at four widths (330, 500, 720, 896; suffixes -narrow, -medium, -wide, none):
-// name, stack line, the contribution grid and a portrait panel. Light gets an ASCII portrait in the ember ramp on
-// paper; dark gets the same face as burner dots (halftone) on the dark panel. Below 600px the portrait stacks under
+// name, stack line, the contribution grid and a portrait panel of burner dots: bright-on-dark for the dark theme,
+// inverted like a print halftone on paper for the light theme (pass --dark-portrait=ascii for the ASCII version). Below 600px the portrait stacks under
 // the text in a shorter panel, above it sits to the right. IBM Plex Mono subsets (OFL, from google/fonts) are embedded so text renders
 // identically everywhere. The portraits come from tiny RGBA samples of the photo with its background removed.
 // The grid is one row per year since the account was created and one cell per week, read from
@@ -17,9 +17,9 @@ const fontCss =
   `@font-face{font-family:'IBM Plex Mono';font-weight:700;src:url(data:font/woff2;base64,${b64(TOOLS + '/fonts/IBMPlexMono-Bold.woff2')}) format('woff2')}`;
 const themes = {
   light: { paper: '#fbf7f0', border: '#d1c9c3', ink: '#29231e', muted: '#77706b', ember: '#d95800',
-           levels: ['#e3ddd8', '#f0cdb6', '#edb793', '#e8834a', '#d95800'], panel: '#fbf7f0', seam: '#e6dfd6', portrait: 'ascii' },
+           levels: ['#e3ddd8', '#f0cdb6', '#edb793', '#e8834a', '#d95800'], panel: '#fbf7f0', seam: '#e6dfd6', portrait: darkStyle, onPaper: true },
   dark:  { paper: '#1c1714', border: '#38322d', ink: '#eae3de', muted: '#98918b', ember: '#d95800',
-           levels: ['#322d29', '#4f3324', '#7d5238', '#b04a12', '#d95800'], panel: '#120e0b', seam: '#38322d', portrait: darkStyle },
+           levels: ['#322d29', '#4f3324', '#7d5238', '#b04a12', '#d95800'], panel: '#120e0b', seam: '#38322d', portrait: darkStyle, onPaper: false },
 };
 const TIERS = { '-narrow': 330, '-medium': 500, '-wide': 720, '': 896 };
 const emberLight = ['#29231e', '#4a2612', '#8a3a0a', '#c04d05', '#d95800', '#e8834a', '#edb793', '#f3d3bb', '#f8e9dd'];
@@ -50,14 +50,17 @@ function ascii(x0, y0, fs) {
   }
   return rows;
 }
-// Halftone portrait: 36x36 burner dots, radius from luminance, with the burner's slow pulse.
-function halftone(x0, y0, step) {
+// Halftone portrait: 36x36 burner dots with the burner's slow pulse. On the dark panel bright pixels become the
+// large bright dots (the face glows); on paper it inverts like a print halftone, dark pixels become the large
+// ink-and-ember dots and highlights stay small and pale.
+function halftone(x0, y0, step, paper) {
   const N = 36, px = sample(TOOLS + '/portrait-36x36.rgba', N, N), rMax = step * 0.425;
   let dots = '';
   for (let y = 0; y < N; y++) for (let x = 0; x < N; x++) {
     const { a, l: lum } = px(x, y); if (a < 0.12) continue;
-    const l = Math.pow(lum, 0.9) * a;
-    dots += `<circle class="d" cx="${(x0 + x * step + step / 2).toFixed(1)}" cy="${(y0 + y * step + step / 2).toFixed(1)}" r="${(0.5 + l * rMax).toFixed(2)}" fill="${ramp(emberDark, 0.25 + l * 0.75)}" style="animation-delay:${(x * 0.06 + y * 0.02).toFixed(2)}s"/>`;
+    const l = paper ? (1 - lum) * a : Math.pow(lum, 0.9) * a;
+    const fill = paper ? ramp(emberLight, 0.9 - l * 0.85) : ramp(emberDark, 0.25 + l * 0.75);
+    dots += `<circle class="d" cx="${(x0 + x * step + step / 2).toFixed(1)}" cy="${(y0 + y * step + step / 2).toFixed(1)}" r="${(0.5 + l * rMax).toFixed(2)}" fill="${fill}" style="animation-delay:${(x * 0.06 + y * 0.02).toFixed(2)}s"/>`;
   }
   return dots;
 }
@@ -76,7 +79,7 @@ function cells(x0, y0, step) {
 function portrait(t, px, py, pw, ph) {
   if (t.portrait === 'ascii') { const fs = Math.min(7.2, Math.floor(Math.min((pw - 10) / 68 / 0.6, (ph - 10) / 41) * 10) / 10); const w = 68 * fs * 0.6, h = 41 * fs; return ascii(px + (pw - w) / 2, py + (ph - h) / 2, fs); }
   const step = Math.min(8, Math.floor(Math.min((pw - 12) / 36, (ph - 12) / 36) * 10) / 10), w = 36 * step;
-  return (t.portrait === 'cells' ? cells : halftone)(px + (pw - w) / 2, py + (ph - w) / 2, step);
+  return t.portrait === 'cells' ? cells(px + (pw - w) / 2, py + (ph - w) / 2, step) : halftone(px + (pw - w) / 2, py + (ph - w) / 2, step, t.onPaper);
 }
 
 // Contribution data: { updated, updatedAt, years: { "2022": [53 weekly totals, null where the week has not happened] } }.
