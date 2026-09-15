@@ -1,7 +1,7 @@
 // Generates the header in light and dark at four widths (330, 500, 720, 896; suffixes -narrow, -medium, -wide, none):
 // name, stack line, the contribution grid and a portrait panel. Light gets an ASCII portrait in the ember ramp on
 // paper; dark gets the same face as burner dots (halftone) on the dark panel. Below 600px the portrait stacks under
-// the text, above it sits to the right. IBM Plex Mono subsets (OFL, from google/fonts) are embedded so text renders
+// the text in a shorter panel, above it sits to the right. IBM Plex Mono subsets (OFL, from google/fonts) are embedded so text renders
 // identically everywhere. The portraits come from tiny RGBA samples of the photo with its background removed.
 // The grid is one row per year since the account was created and one cell per week, read from
 // tools/contributions.json (written by .github/workflows/contributions.yml). Without that file every cell stays idle.
@@ -74,8 +74,8 @@ function cells(x0, y0, step) {
 }
 // Portrait fitted into a panel: ASCII glyph size from the panel width, dot step from it likewise; both centred.
 function portrait(t, px, py, pw, ph) {
-  if (t.portrait === 'ascii') { const fs = Math.min(7.2, Math.floor((pw - 10) / 68 / 0.6 * 10) / 10); const w = 68 * fs * 0.6, h = 41 * fs; return ascii(px + (pw - w) / 2, py + (ph - h) / 2, fs); }
-  const step = Math.min(8, Math.floor((pw - 12) / 36 * 10) / 10), w = 36 * step;
+  if (t.portrait === 'ascii') { const fs = Math.min(7.2, Math.floor(Math.min((pw - 10) / 68 / 0.6, (ph - 10) / 41) * 10) / 10); const w = 68 * fs * 0.6, h = 41 * fs; return ascii(px + (pw - w) / 2, py + (ph - h) / 2, fs); }
+  const step = Math.min(8, Math.floor(Math.min((pw - 12) / 36, (ph - 12) / 36) * 10) / 10), w = 36 * step;
   return (t.portrait === 'cells' ? cells : halftone)(px + (pw - w) / 2, py + (ph - w) / 2, step);
 }
 
@@ -150,7 +150,7 @@ function header(t, W) {
     const tb = textBlock(t, P, 24, nameFs);
     const step = Math.floor((W - 2 * P - 22) / 53 * 10) / 10;
     const g = grid(t, P, tb.bottom + 18, step, 6, false);
-    const split = Math.round(tb.bottom + 18 + g.h + 12), PH = 300, H = split + PH;
+    const split = Math.round(tb.bottom + 18 + g.h + 12), PH = W >= 500 ? 250 : 200, H = split + PH; // a shorter portrait panel on phones: the face, not a full screen of it
     return open(t, W, H, 'Portrait below.') + `<g clip-path="url(#card)"><rect width="${W}" height="${H}" fill="${t.paper}"/><rect y="${split}" width="${W}" height="${PH}" fill="${t.panel}"/></g>
 <line x1="0" y1="${split + 0.5}" x2="${W}" y2="${split + 0.5}" stroke="${t.seam}"/>${frame(t, W, H)}
 ${tb.svg}
