@@ -91,11 +91,12 @@ function contributions() {
   }
   try { return JSON.parse(readFileSync(TOOLS + '/contributions.json', 'utf8')); } catch { return null; }
 }
-function caption(data, firstYear, long) {
-  if (!data) return `CONTRIBUTIONS SINCE ${firstYear}`;
+// Caption under the grid: the total on one line and the refresh stamp on the next, so neither runs into the portrait.
+function caption(data, firstYear) {
+  if (!data) return [`CONTRIBUTIONS SINCE ${firstYear}`];
   const total = Object.values(data.years).flat().reduce((a, v) => a + (v || 0), 0).toLocaleString('en-US');
   const stamp = data.updatedAt ? data.updatedAt.replace('T', ' ').slice(0, 16) + ' UTC' : data.updated;
-  return `${total} CONTRIBUTIONS SINCE ${firstYear}` + (stamp ? (long ? ` · UPDATED ${stamp}` : ` · ${stamp}`) : '');
+  return [`${total} CONTRIBUTIONS SINCE ${firstYear}`, ...(stamp ? [`UPDATED ${stamp}`] : [])];
 }
 // One row per year, 53 week cells per row; levels are quartiles of the non-zero weeks so the scale adapts to the years.
 function grid(t, x0, y0, step, fs, long) {
@@ -115,7 +116,9 @@ function grid(t, x0, y0, step, fs, long) {
     }
     s += `<text x="${(x0 + 53 * step + 3).toFixed(1)}" y="${(y0 + r * step + size - 0.3).toFixed(1)}" font-size="${fs}" fill="${t.muted}">${String(y).slice(2)}</text>`;
   });
-  return { svg: s + `<text x="${x0}" y="${(y0 + years.length * step + (long ? 22 : 16)).toFixed(1)}" font-size="${long ? 9.5 : 8}" letter-spacing="${long ? 1.5 : 1}" fill="${t.muted}">${caption(data, years[0], long)}</text>`, h: years.length * step + (long ? 26 : 20) };
+  const capFs = long ? 9.5 : 8, lh = long ? 14 : 12, lines = caption(data, years[0]), y1 = y0 + years.length * step + (long ? 22 : 16);
+  s += lines.map((line, i) => `<text x="${x0}" y="${(y1 + i * lh).toFixed(1)}" font-size="${capFs}" letter-spacing="${long ? 1.5 : 1}" fill="${t.muted}">${line}</text>`).join('');
+  return { svg: s, h: years.length * step + (long ? 26 : 20) + (lines.length - 1) * lh };
 }
 
 const STYLE = t => `<style>${fontCss}
@@ -141,7 +144,7 @@ ${STYLE(t)}
 const frame = (t, W, H) => `<rect x=".5" y=".5" width="${W - 1}" height="${H - 1}" rx="6" fill="none" stroke="${t.border}"/>`;
 // Text block: status dot and label, name with the blinking cursor, stack line. Returns its bottom y.
 function textBlock(t, x, y, nameFs) {
-  const labelFs = nameFs >= 40 ? 11 : 9.5, stackFs = nameFs >= 40 ? 13 : 10.5;
+  const labelFs = nameFs >= 40 ? 11 : 9.5, stackFs = nameFs >= 40 ? 13 : nameFs >= 34 ? 10.5 : 9.5; // 47 glyphs must fit the 290px phone column
   const cursorX = x + 11 * nameFs * 0.6 - 11 * nameFs * 0.03 + 8, cursorW = Math.round(nameFs * 0.43), cursorH = Math.round(nameFs * 0.13);
   const yLabel = y + 11, yName = yLabel + nameFs * 1.33, yStack = yName + nameFs * 0.7;
   return { svg: `<circle cx="${x + 5}" cy="${yLabel - 4}" r="${labelFs * 0.8}" fill="${t.ember}" opacity=".14"/><circle cx="${x + 5}" cy="${yLabel - 4}" r="${labelFs * 0.4}" fill="${t.ember}"/>
