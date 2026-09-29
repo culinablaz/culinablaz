@@ -1,5 +1,7 @@
-// Generates README.md from the panels in assets/. Each panel becomes a light and a dark block: a <picture> that picks
-// the width tier matching GitHub's README column, wrapped in the anchor GitHub's theme CSS keys on
+// Generates README.md from the images in assets/: the page (header to elsewhere, stitched into one image by
+// gen-page.mjs so the section hop runs on one clock) and the LinkedIn card, kept apart so it can be a link. Each
+// becomes a light and a dark block: a <picture> that picks the width tier matching GitHub's README column, wrapped in
+// the anchor GitHub's theme CSS keys on
 // (#gh-light-mode-only / #gh-dark-mode-only). One tag per line keeps each block an HTML block, which GitHub needs
 // to preserve every <source>. The GitHub mobile app ignores that CSS and would show both, so each picture also opens
 // with a source that swaps in a blank strip when the viewer's scheme is the other theme. On the web that source never
@@ -10,7 +12,7 @@
 // usage: node tools/gen-readme.mjs assets README.md
 import { readFileSync, writeFileSync } from 'node:fs';
 const [ASSETS, OUT] = process.argv.slice(2);
-const PANELS = ['header', 'about', 'experience', 'scope', 'elsewhere', 'link-linkedin'];
+const PANELS = ['page', 'link-linkedin'];
 const LINKS = { 'link-linkedin': 'https://www.linkedin.com/in/culinablaz' };
 // Width tiers matched to the column GitHub gives the README: viewport minus 82px below 768px, minus 385px up to
 // 1011px, minus 449px above (capped near 846px). The fallback <img> is the 896px design.
@@ -38,4 +40,4 @@ const block = (panel, theme, alt) => [
   '</a>',
 ].join('\n');
 writeFileSync(OUT, PANELS.map(p => { const alt = name(p); return block(p, 'light', alt) + '\n' + block(p, 'dark', alt); }).join('\n\n') + '\n');
-console.log('README written:', PANELS.length, 'panels × 2 themes');
+console.log('README written:', PANELS.length, 'images × 2 themes');

@@ -27,6 +27,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - run: node tools/gen-header.mjs tools assets
       - run: node tools/gen-sections.mjs tools assets
+      - run: node tools/gen-page.mjs assets
       - run: node tools/gen-readme.mjs assets README.md
       - run: |
           git config user.name "github-actions[bot]"
