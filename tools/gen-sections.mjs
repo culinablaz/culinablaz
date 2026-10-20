@@ -62,7 +62,8 @@ const FT_BULLETS = [
 const FL_ROWS = [
   ['BACKEND', 'VyFinance · Cardano DEX', 'account layer · Jun–Aug 2025'],
   ['BACKEND', 'TMinusOne · Cardano launchpad', 'core REST API · Mar–May 2025'],
-  ['WEB', 'WordPress sites and webshops', 'custom plugins, over the years'],
+  ['WEB', 'Websites', 'for clients, over the years'],
+  ['WEB', 'Custom-built webshops', 'with client-specific features'],
 ];
 const EXPERIENCE_ALT = `Experience. Full-time: Sportradar (formerly NSoft), Mostar. Software Engineer, ${SINCE} to now, ${YEARS_LABEL.toLowerCase()}. ${sentence(TEAM)} ${FT_BULLETS.join(' ')} Freelance, part-time alongside the role. `
   + [...new Set(FL_ROWS.map(r => r[0]))].map(k => `${titleCase(k)}: ${FL_ROWS.filter(r => r[0] === k).map(([, n, sub]) => `${commas(n)}, ${commas(sub)}`).join('; ')}.`).join(' ');
@@ -117,7 +118,7 @@ function experience(t, W) {
 const SCOPE = [
   ['Backend', 18, 'Java 17–25 · Spring Boot · PHP/Symfony · service design'],
   ['AI tooling', 17, 'Claude Code · Oh My Pi · OpenSpec · Superpowers contributor'],
-  ['Planning', 16, 'Scoping · specs · sequencing the build · shipping'],
+  ['Planning', 16, 'Scoping · specs · shipping'],
   ['Platform', 15, 'Kubernetes · k3s · Helm · Docker · Podman · Jenkins'],
   ['Data', 10, 'PostgreSQL · MongoDB · MySQL · Redis · Kafka · RabbitMQ · NATS'],
   ['Systems', 11, 'Linux · Bash · Python for tooling · Rust at patch level'],
