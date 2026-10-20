@@ -135,7 +135,7 @@ text{font-family:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,mono
 </style>`;
 // The header's accessible description; tools/gen-readme.mjs copies title and desc into the README's alt. The
 // contribution total is left out on purpose so the README does not change with every daily refresh.
-const DESC = `Software Engineer at Sportradar, formerly NSoft. Java, Spring, Kubernetes, Kafka, PostgreSQL. Contribution grid, one row per year since 2022, refreshed daily. Portrait in ${darkStyle === 'ascii' ? 'ASCII' : darkStyle === 'cells' ? 'grid cells' : 'halftone dots'}.`;
+const DESC = `Software Engineer at Sportradar, formerly NSoft. Java, Spring Boot, AI, Cloud. Contribution grid, one row per year since 2022, refreshed daily. Portrait in ${darkStyle === 'ascii' ? 'ASCII' : darkStyle === 'cells' ? 'grid cells' : 'halftone dots'}.`;
 const open = (t, W, H) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-labelledby="t d">
 <title id="t">Blaž Čulina</title>
 <desc id="d">${DESC}</desc>
@@ -144,14 +144,14 @@ ${STYLE(t)}
 const frame = (t, W, H) => `<rect x=".5" y=".5" width="${W - 1}" height="${H - 1}" rx="6" fill="none" stroke="${t.border}"/>`;
 // Text block: status dot and label, name with the blinking cursor, stack line. Returns its bottom y.
 function textBlock(t, x, y, nameFs) {
-  const labelFs = nameFs >= 40 ? 11 : 9.5, stackFs = nameFs >= 40 ? 13 : nameFs >= 34 ? 10.5 : 9.5; // 47 glyphs must fit the 290px phone column
+  const labelFs = nameFs >= 40 ? 11 : 9.5, stackFs = nameFs >= 40 ? 13 : nameFs >= 34 ? 10.5 : 9.5; // a stack line of up to 47 glyphs fits the 290px phone column
   const cursorX = x + 11 * nameFs * 0.6 - 11 * nameFs * 0.03 + 8, cursorW = Math.round(nameFs * 0.43), cursorH = Math.round(nameFs * 0.13);
   const yLabel = y + 11, yName = yLabel + nameFs * 1.33, yStack = yName + nameFs * 0.7;
   return { svg: `<circle cx="${x + 5}" cy="${yLabel - 4}" r="${labelFs * 0.8}" fill="${t.ember}" opacity=".14"/><circle cx="${x + 5}" cy="${yLabel - 4}" r="${labelFs * 0.4}" fill="${t.ember}"/>
 <text x="${x + 22}" y="${yLabel}" font-size="${labelFs}" letter-spacing="${labelFs * 0.18}" fill="${t.muted}">SOFTWARE ENGINEER · SPORTRADAR</text>
 <text x="${x}" y="${yName.toFixed(1)}" font-size="${nameFs}" font-weight="700" letter-spacing="${(-nameFs * 0.03).toFixed(2)}" fill="${t.ink}">Blaž Čulina</text>
 <rect class="cur" x="${cursorX.toFixed(1)}" y="${(yName - cursorH).toFixed(1)}" width="${cursorW}" height="${cursorH}"/>
-<text x="${x}" y="${yStack.toFixed(1)}" font-size="${stackFs}" fill="${t.muted}">Java · Spring · Kubernetes · Kafka · PostgreSQL</text>`, bottom: yStack };
+<text x="${x}" y="${yStack.toFixed(1)}" font-size="${stackFs}" fill="${t.muted}">Java · Spring Boot · AI · Cloud</text>`, bottom: yStack };
 }
 function header(t, W) {
   if (W < 600) { // stacked: text and grid on top, portrait panel underneath

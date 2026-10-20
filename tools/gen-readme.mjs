@@ -13,7 +13,7 @@
 import { readFileSync, writeFileSync } from 'node:fs';
 const [ASSETS, OUT] = process.argv.slice(2);
 const PANELS = ['page', 'link-linkedin'];
-const LINKS = { 'link-linkedin': 'https://www.linkedin.com/in/culinablaz' };
+const LINKS = { 'link-linkedin': 'https://www.linkedin.com/in/blazculina' };
 // Width tiers matched to the column GitHub gives the README: viewport minus 82px below 768px, minus 385px up to
 // 1011px, minus 449px above (capped near 846px). The fallback <img> is the 896px design.
 const SOURCES = [

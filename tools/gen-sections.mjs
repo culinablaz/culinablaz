@@ -30,8 +30,18 @@ const label = (t, s, x, y, anchor = 'start', fs = 10) => `<text x="${x}" y="${y}
 const body = (t, lines, x, y, fs = 11.5, lh = 18, fill = null, weight = 400) => lines.map((s, i) => `<text x="${x}" y="${y + i * lh}" font-size="${fs}" font-weight="${weight}" fill="${fill || t.ink}">${s}</text>`).join('');
 const bullet = (t, x, y) => `<rect x="${x}" y="${y - 7}" width="5" height="5" rx="1" fill="${t.ember}"/>`;
 
+// ---------- Tenure: one start date behind the About's years and the Experience card ----------
+const TENURE_START = { y: 2022, m: 8 }; // August 2022
+const NOW = new Date();
+const MONTHS_IN = (NOW.getUTCFullYear() - TENURE_START.y) * 12 + (NOW.getUTCMonth() + 1 - TENURE_START.m);
+const WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
+const YEARS = WORDS[Math.floor(MONTHS_IN / 12)] || String(Math.floor(MONTHS_IN / 12)); // whole years: "and counting" never rounds up
+const YEARS_LABEL = `${YEARS.toUpperCase()} YEARS AND COUNTING`;
+const month = style => new Date(Date.UTC(TENURE_START.y, TENURE_START.m - 1)).toLocaleString('en-US', { month: style, timeZone: 'UTC' });
+const SINCE = `${month('long')} ${TENURE_START.y}`, SINCE_SHORT = `${month('short')} ${TENURE_START.y}`;
+
 // ---------- About ----------
-const ABOUT = 'Software engineer at Sportradar (formerly NSoft), based between Imotski, Croatia and Mostar, Bosnia and Herzegovina. Backend specialist: four years of production Java, Spring and Kubernetes behind real-time betting games, where a wrong answer costs money. I plan work as carefully as I build it, and around that core I cover a lot of ground. If it has to ship, I learn it and ship it.';
+const ABOUT = `Software engineer at Sportradar (formerly NSoft), based between Imotski, Croatia and Mostar, Bosnia and Herzegovina. Pragmatic backend specialist: ${YEARS} years of production Java, Spring Boot and Kubernetes behind real-time iGaming products, where a wrong answer costs money. Around that core I cover a lot of ground. Having grown up around computers, I like knowing how things actually work under the hood rather than treating systems and tools as black boxes. I'm also easy to work with and get on well with people across teams.`;
 function about(t, W) {
   const P = pad(W), fs = W >= 720 ? 12.5 : 11.5, lh = W >= 720 ? 21 : 17;
   const lines = wrap(ABOUT, chars(W - 2 * P, fs));
@@ -39,24 +49,23 @@ function about(t, W) {
 }
 
 // ---------- Experience: two stacked cards ----------
-const TENURE_START = { y: 2022, m: 10 }; // October 2022
-const NOW = new Date();
-const MONTHS_IN = (NOW.getUTCFullYear() - TENURE_START.y) * 12 + (NOW.getUTCMonth() + 1 - TENURE_START.m);
-const WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten'];
-const YEARS_LABEL = `${(WORDS[Math.round(MONTHS_IN / 12)] || Math.round(MONTHS_IN / 12)).toUpperCase()} YEARS AND COUNTING`;
+const TEAM = 'iGaming and Platforms team · hybrid';
 const FT_BULLETS = [
-  'Backend services for real-time betting games: game logic, ticket processing, settlement, and the feed systems that supply them.',
-  'Kubernetes operators and Helm-based deployment tooling for game services.',
-  'Planning and sequencing delivery across services: scoping, specs, and getting things to production.',
+  'Architected, built and maintained backend services for six real-time products end to end, used 24/7 and handling up to a million transactions a day with 99.9% uptime, all certified by independent testing labs.',
+  'Maintained and developed a critical legacy PHP system: a 24/7 data feed distributing to 100+ B2B clients worldwide, acting as their main point of contact and first escalation point for outages.',
+  'Built a certifiable, tamper-proof random number generator library to GLI lab standards, verified against NIST reference data.',
+  'Developed the team\'s custom Kubernetes operator (Java Operator SDK), which automates deploying and configuring services.',
+  'Led the migration of core components from a PHP/Symfony monolith to microservices, upgraded legacy services to current Spring Boot and Java, and consulted on design and product architecture decisions.',
+  'Brought AI coding agents and harnesses into the team\'s workflow, and built internal skills the whole team uses for library releases, service integrations, code rules and service knowledge.',
 ];
+// Names and subs stay short: on the 330px panel a name fits 29 glyphs and a sub 33.
 const FL_ROWS = [
-  ['BACKEND', 'Cardano DEX and launchpad', 'VyFinance · TMinusOne · 2025'],
-  ['WEB', 'WordPress sites', 'for clients, over the years'],
-  ['WEB', 'Custom plugins', 'tailored to what each client needed'],
-  ['WEB', 'Webshops', 'built and handed over'],
+  ['BACKEND', 'VyFinance · Cardano DEX', 'account layer · Jun–Aug 2025'],
+  ['BACKEND', 'TMinusOne · Cardano launchpad', 'core REST API · Mar–May 2025'],
+  ['WEB', 'WordPress sites and webshops', 'custom plugins, over the years'],
 ];
-const EXPERIENCE_ALT = `Experience. Full-time: Sportradar (formerly NSoft), Mostar. Software Engineer, October 2022 to now, ${YEARS_LABEL.toLowerCase()}. ${FT_BULLETS.join(' ')} Freelance, part-time alongside the role. `
-  + [...new Set(FL_ROWS.map(r => r[0]))].map(k => `${titleCase(k)}: ${FL_ROWS.filter(r => r[0] === k).map(([, n, sub]) => `${n}, ${commas(sub)}`).join('; ')}.`).join(' ');
+const EXPERIENCE_ALT = `Experience. Full-time: Sportradar (formerly NSoft), Mostar. Software Engineer, ${SINCE} to now, ${YEARS_LABEL.toLowerCase()}. ${sentence(TEAM)} ${FT_BULLETS.join(' ')} Freelance, part-time alongside the role. `
+  + [...new Set(FL_ROWS.map(r => r[0]))].map(k => `${titleCase(k)}: ${FL_ROWS.filter(r => r[0] === k).map(([, n, sub]) => `${commas(n)}, ${commas(sub)}`).join('; ')}.`).join(' ');
 // Tenure block in the header grid's idiom: one row per year, twelve month cells, employed months lit, the current
 // month as the pulsing dot, months not yet reached left as gaps.
 function tenureBlock(t, x0, y0) {
@@ -84,7 +93,7 @@ function experience(t, W) {
   ty += 24;
   const nameLines = W >= 500 ? ['Sportradar (formerly NSoft) · Mostar'] : ['Sportradar (formerly NSoft)'];
   card += body(t, nameLines, xC + ip, ty, 12.5, 18, t.ink, 700); ty += 18;
-  card += body(t, [W >= 500 ? 'Software Engineer · October 2022 to now' : 'Software Engineer · Oct 2022 to now'], xC + ip, ty, W >= 500 ? 11 : 10.5, 16, t.muted); ty += 14;
+  card += body(t, [`Software Engineer · ${W >= 500 ? SINCE : SINCE_SHORT} to now`, TEAM], xC + ip, ty, W >= 500 ? 11 : 10.5, 16, t.muted); ty += 30;
   if (W < 500) { card += label(t, YEARS_LABEL, xC + ip, ty + 8, 'start', 9); ty += 18; }
   if (sideBlock) { const tb = tenureBlock(t, xC + wC - ip - (12 * 9.3 + 20), y0 + 40); card += tb.svg; ty += 18; }
   else { const tb = tenureBlock(t, xC + ip, ty); card += tb.svg; ty += tb.h + 16; }
@@ -104,12 +113,13 @@ function experience(t, W) {
 }
 
 // ---------- Technical scope: heat rows ----------
+// On the 896px panel each note sits beside its cells on one line, so a note fits 62 glyphs at most.
 const SCOPE = [
-  ['Backend', 18, 'Java · Spring Boot · service design · APIs · data modelling'],
-  ['AI tooling', 17, 'Daily agent usage and research · superpowers contributor'],
+  ['Backend', 18, 'Java 17–25 · Spring Boot · PHP/Symfony · service design'],
+  ['AI tooling', 17, 'Claude Code · Oh My Pi · OpenSpec · Superpowers contributor'],
   ['Planning', 16, 'Scoping · specs · sequencing the build · shipping'],
-  ['Platform', 15, 'Kubernetes · Helm · Docker · Jenkins · GitHub Actions'],
-  ['Data', 10, 'PostgreSQL · Kafka · Flyway · Testcontainers'],
+  ['Platform', 15, 'Kubernetes · k3s · Helm · Docker · Podman · Jenkins'],
+  ['Data', 10, 'PostgreSQL · MongoDB · MySQL · Redis · Kafka · RabbitMQ · NATS'],
   ['Systems', 11, 'Linux · Bash · Python for tooling · Rust at patch level'],
   ['Blockchain', 8, 'Cardano · Blockfrost, from two contracts'],
   ['Frontend', 6, 'Vue 3 · TypeScript · a deliberate focus for 2026'],
@@ -122,7 +132,7 @@ function scope(t, W) {
   for (const [i, [name, n, note]] of SCOPE.entries()) {
     s += `<text x="${P}" y="${y + 13}" font-size="${W >= 500 ? 13 : 12}" fill="${t.ink}">${name}</text>`;
     for (let c = 0; c < 20; c++) { const lit = c < n; s += `<rect x="${(P + nameW + c * cellStep).toFixed(1)}" y="${y + 3}" width="${cell}" height="${cell}" rx="2" fill="${lit ? lerpHex(t.warm, t.ember, c / 19) : t.idle}"${lit ? ` class="g" style="animation-delay:${(c * 0.05 + i * 0.12).toFixed(2)}s"` : ''}/>`; }
-    if (side) { s += `<text x="${P + nameW + 20 * cellStep + 20}" y="${y + 13}" font-size="${noteFs}" fill="${t.muted}">${note}</text>`; y += 34; }
+    if (side) { s += `<text x="${P + nameW + 20 * cellStep + 17}" y="${y + 13}" font-size="${noteFs}" fill="${t.muted}">${note}</text>`; y += 34; }
     else { const lines = wrap(note, chars(W - 2 * P, noteFs)); s += body(t, lines, P, y + 31, noteFs, noteLh, t.muted); y += 31 + lines.length * noteLh - 2; }
   }
   return head(W, y + (side ? 10 : 14), t, 'Technical scope, deepest areas first. ' + SCOPE.map(([name, , note]) => `${name}: ${sentence(note)}`).join(' ')) + s + `</svg>`;
@@ -130,9 +140,9 @@ function scope(t, W) {
 
 // ---------- Elsewhere ----------
 const ELSEWHERE = [
-  ['OPEN SOURCE', 'Patches upstream when something I use is broken: pop-os/freedesktop-icons (Rust), obra/superpowers.'],
+  ['OPEN SOURCE', 'Patches upstream when something I use is broken or missing: GitHub Copilot CLI support for obra/superpowers (#910), and an icon-rendering fix for pop-os/freedesktop-icons (Rust), shipped in Pop!_OS (#9).'],
   ['HOMELAB', 'Self-hosted Kubernetes on a private network, partly on Raspberry Pis, for testing configuration and behaviour before it reaches anything that matters.'],
-  ['EDUCATION', 'FSRE, University of Mostar · Bachelor\'s degree, Computer Science'],
+  ['EDUCATION', 'BSc in Computer Science · University of Mostar, FSRE · thesis: distributed speech recognition processing on a Raspberry Pi cluster'],
   ['LANGUAGES', 'Croatian (native) · English (full professional) · German (limited working)'],
   ['OTHERWISE', 'Tinkering with hardware and software, making music, exploring side projects.'],
 ];
@@ -149,7 +159,7 @@ function elsewhere(t, W) {
 // ---------- LinkedIn card: the README wraps it in the real link ----------
 function card(t, W) {
   const P = pad(W), H = 72;
-  return head(W, H, t, 'Contact: LinkedIn profile, linkedin.com/in/culinablaz') + label(t, 'CONTACT', P, 27) + `<text x="${P}" y="50" font-size="13" font-weight="700" fill="${t.ink}">LinkedIn · /in/culinablaz</text><path d="M${W - P - 18} 44h18m-6 -6l6 6l-6 6" fill="none" stroke="${t.ember}" stroke-width="1.75" stroke-linecap="square"/></svg>`;
+  return head(W, H, t, 'Contact: LinkedIn profile, linkedin.com/in/blazculina') + label(t, 'CONTACT', P, 27) + `<text x="${P}" y="50" font-size="13" font-weight="700" fill="${t.ink}">LinkedIn · /in/blazculina</text><path d="M${W - P - 18} 44h18m-6 -6l6 6l-6 6" fill="none" stroke="${t.ember}" stroke-width="1.75" stroke-linecap="square"/></svg>`;
 }
 
 for (const [name, t] of Object.entries(themes)) for (const [suffix, W] of Object.entries(TIERS)) for (const [k, fn] of Object.entries({ about, experience, scope, elsewhere, 'link-linkedin': card })) writeFileSync(`${OUT}/${k}${suffix}-${name}.svg`, fn(t, W));
