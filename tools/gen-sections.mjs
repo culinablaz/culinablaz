@@ -117,7 +117,7 @@ function experience(t, W) {
 // On the 896px panel each note sits beside its cells on one line, so a note fits 62 glyphs at most.
 const SCOPE = [
   ['Backend', 18, 'Java 17–25 · Spring Boot · PHP/Symfony · service design'],
-  ['AI tooling', 17, 'Claude Code · Oh My Pi · OpenSpec · Superpowers contributor'],
+  ['AI tooling', 17, 'Claude Code · Oh My Pi · OpenSpec · Superpowers'],
   ['Planning', 16, 'Scoping · specs · shipping'],
   ['Platform', 15, 'Kubernetes · k3s · Helm · Docker · Podman · Jenkins'],
   ['Data', 10, 'PostgreSQL · MongoDB · MySQL · Redis · Kafka · RabbitMQ · NATS'],
